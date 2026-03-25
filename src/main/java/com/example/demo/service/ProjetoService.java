@@ -3,8 +3,11 @@ package com.example.demo.service;
 import com.example.demo.dto.projeto.ProjetoRequestDto;
 import com.example.demo.dto.projeto.ProjetoResponseDto;
 import com.example.demo.entity.Projeto;
+import com.example.demo.enums.Prioridade;
+import com.example.demo.enums.StatusProjeto;
 import com.example.demo.repository.ProjetoRepository;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
     private final EntityLookupService lookupService;
+    private final PatchFieldService patchFieldService;
 
     public List<ProjetoResponseDto> listarTodos() {
         return projetoRepository.findAll().stream().map(this::toResponse).toList();
@@ -35,6 +39,12 @@ public class ProjetoService {
         return toResponse(projetoRepository.save(projeto));
     }
 
+    public ProjetoResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
+        Projeto projeto = lookupService.getProjeto(id);
+        aplicarPatch(projeto, updates);
+        return toResponse(projetoRepository.save(projeto));
+    }
+
     public void deletar(Long id) {
         projetoRepository.delete(lookupService.getProjeto(id));
     }
@@ -49,6 +59,36 @@ public class ProjetoService {
         projeto.setDataFim(request.getDataFim());
         projeto.setOrcamentoPrevisto(request.getOrcamentoPrevisto());
         projeto.setPercentualConcluido(request.getPercentualConcluido());
+    }
+
+    private void aplicarPatch(Projeto projeto, Map<String, Object> updates) {
+        if (updates.containsKey("nome")) {
+            projeto.setNome(patchFieldService.getString(updates, "nome"));
+        }
+        if (updates.containsKey("descricao")) {
+            projeto.setDescricao(patchFieldService.getString(updates, "descricao"));
+        }
+        if (updates.containsKey("objetivo")) {
+            projeto.setObjetivo(patchFieldService.getString(updates, "objetivo"));
+        }
+        if (updates.containsKey("status")) {
+            projeto.setStatus(patchFieldService.getEnum(updates, "status", StatusProjeto.class));
+        }
+        if (updates.containsKey("prioridade")) {
+            projeto.setPrioridade(patchFieldService.getEnum(updates, "prioridade", Prioridade.class));
+        }
+        if (updates.containsKey("dataInicio")) {
+            projeto.setDataInicio(patchFieldService.getLocalDate(updates, "dataInicio"));
+        }
+        if (updates.containsKey("dataFim")) {
+            projeto.setDataFim(patchFieldService.getLocalDate(updates, "dataFim"));
+        }
+        if (updates.containsKey("orcamentoPrevisto")) {
+            projeto.setOrcamentoPrevisto(patchFieldService.getBigDecimal(updates, "orcamentoPrevisto"));
+        }
+        if (updates.containsKey("percentualConcluido")) {
+            projeto.setPercentualConcluido(patchFieldService.getInteger(updates, "percentualConcluido"));
+        }
     }
 
     private ProjetoResponseDto toResponse(Projeto projeto) {

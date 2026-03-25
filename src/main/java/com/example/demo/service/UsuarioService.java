@@ -3,8 +3,10 @@ package com.example.demo.service;
 import com.example.demo.dto.usuario.UsuarioRequestDto;
 import com.example.demo.dto.usuario.UsuarioResponseDto;
 import com.example.demo.entity.Usuario;
+import com.example.demo.enums.PerfilUsuario;
 import com.example.demo.repository.UsuarioRepository;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final EntityLookupService lookupService;
+    private final PatchFieldService patchFieldService;
 
     public List<UsuarioResponseDto> listarTodos() {
         return usuarioRepository.findAll().stream().map(this::toResponse).toList();
@@ -35,6 +38,12 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(usuario));
     }
 
+    public UsuarioResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
+        Usuario usuario = lookupService.getUsuario(id);
+        aplicarPatch(usuario, updates);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
     public void deletar(Long id) {
         usuarioRepository.delete(lookupService.getUsuario(id));
     }
@@ -45,6 +54,24 @@ public class UsuarioService {
         usuario.setSenha(request.getSenha());
         usuario.setTelefone(request.getTelefone());
         usuario.setPerfil(request.getPerfil());
+    }
+
+    private void aplicarPatch(Usuario usuario, Map<String, Object> updates) {
+        if (updates.containsKey("nome")) {
+            usuario.setNome(patchFieldService.getString(updates, "nome"));
+        }
+        if (updates.containsKey("email")) {
+            usuario.setEmail(patchFieldService.getString(updates, "email"));
+        }
+        if (updates.containsKey("senha")) {
+            usuario.setSenha(patchFieldService.getString(updates, "senha"));
+        }
+        if (updates.containsKey("telefone")) {
+            usuario.setTelefone(patchFieldService.getString(updates, "telefone"));
+        }
+        if (updates.containsKey("perfil")) {
+            usuario.setPerfil(patchFieldService.getEnum(updates, "perfil", PerfilUsuario.class));
+        }
     }
 
     private UsuarioResponseDto toResponse(Usuario usuario) {

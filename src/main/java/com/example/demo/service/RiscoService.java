@@ -3,8 +3,11 @@ package com.example.demo.service;
 import com.example.demo.dto.risco.RiscoRequestDto;
 import com.example.demo.dto.risco.RiscoResponseDto;
 import com.example.demo.entity.Risco;
+import com.example.demo.enums.CategoriaRisco;
+import com.example.demo.enums.StatusRisco;
 import com.example.demo.repository.RiscoRepository;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ public class RiscoService {
 
     private final RiscoRepository riscoRepository;
     private final EntityLookupService lookupService;
+    private final PatchFieldService patchFieldService;
 
     public List<RiscoResponseDto> listarTodos() {
         return riscoRepository.findAll().stream().map(this::toResponse).toList();
@@ -35,6 +39,12 @@ public class RiscoService {
         return toResponse(riscoRepository.save(risco));
     }
 
+    public RiscoResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
+        Risco risco = lookupService.getRisco(id);
+        aplicarPatch(risco, updates);
+        return toResponse(riscoRepository.save(risco));
+    }
+
     public void deletar(Long id) {
         riscoRepository.delete(lookupService.getRisco(id));
     }
@@ -50,6 +60,39 @@ public class RiscoService {
         risco.setEstrategiaResposta(request.getEstrategiaResposta());
         risco.setPlanoMitigacao(request.getPlanoMitigacao());
         risco.setProjeto(lookupService.getProjeto(request.getProjetoId()));
+    }
+
+    private void aplicarPatch(Risco risco, Map<String, Object> updates) {
+        if (updates.containsKey("titulo")) {
+            risco.setTitulo(patchFieldService.getString(updates, "titulo"));
+        }
+        if (updates.containsKey("descricao")) {
+            risco.setDescricao(patchFieldService.getString(updates, "descricao"));
+        }
+        if (updates.containsKey("categoria")) {
+            risco.setCategoria(patchFieldService.getEnum(updates, "categoria", CategoriaRisco.class));
+        }
+        if (updates.containsKey("probabilidade")) {
+            risco.setProbabilidade(patchFieldService.getInteger(updates, "probabilidade"));
+        }
+        if (updates.containsKey("impacto")) {
+            risco.setImpacto(patchFieldService.getInteger(updates, "impacto"));
+        }
+        if (updates.containsKey("criticidade")) {
+            risco.setCriticidade(patchFieldService.getInteger(updates, "criticidade"));
+        }
+        if (updates.containsKey("status")) {
+            risco.setStatus(patchFieldService.getEnum(updates, "status", StatusRisco.class));
+        }
+        if (updates.containsKey("estrategiaResposta")) {
+            risco.setEstrategiaResposta(patchFieldService.getString(updates, "estrategiaResposta"));
+        }
+        if (updates.containsKey("planoMitigacao")) {
+            risco.setPlanoMitigacao(patchFieldService.getString(updates, "planoMitigacao"));
+        }
+        if (updates.containsKey("projetoId")) {
+            risco.setProjeto(lookupService.getProjeto(patchFieldService.getLong(updates, "projetoId")));
+        }
     }
 
     private RiscoResponseDto toResponse(Risco risco) {

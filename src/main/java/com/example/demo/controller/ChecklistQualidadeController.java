@@ -6,10 +6,12 @@ import com.example.demo.service.ChecklistQualidadeService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,6 +47,12 @@ public class ChecklistQualidadeController {
     public ResponseEntity<ChecklistQualidadeResponseDto> atualizar(@PathVariable Long id,
             @Valid @RequestBody ChecklistQualidadeRequestDto request) {
         return ResponseEntity.ok(checklistQualidadeService.atualizar(id, request));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ChecklistQualidadeResponseDto> atualizarParcialmente(@PathVariable Long id,
+            @RequestBody Map<String, Object> updates) {
+        return ResponseEntity.ok(checklistQualidadeService.atualizarParcialmente(id, updates));
     }
 
     @DeleteMapping("/{id}")

@@ -345,6 +345,876 @@
           }
         }
       ]
+    },
+    {
+      "name": "03 - Consultas GET",
+      "item": [
+        {
+          "name": "GET usuario por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Usuario retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('usuarioId'))); pm.expect(json.nome).to.be.a('string'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["usuarios", "{{usuarioId}}"] }
+          }
+        },
+        {
+          "name": "GET projeto por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Projeto retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.nome).to.be.a('string'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/projetos/{{projetoId}}", "host": ["{{baseUrl}}"], "path": ["projetos", "{{projetoId}}"] }
+          }
+        },
+        {
+          "name": "GET participante por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Participante retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('participanteId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/participantes/{{participanteId}}", "host": ["{{baseUrl}}"], "path": ["participantes", "{{participanteId}}"] }
+          }
+        },
+        {
+          "name": "GET item EAP por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Item EAP retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('eapItemId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/eap-itens/{{eapItemId}}", "host": ["{{baseUrl}}"], "path": ["eap-itens", "{{eapItemId}}"] }
+          }
+        },
+        {
+          "name": "GET atividade por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Atividade retornada', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('atividadeId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/atividades/{{atividadeId}}", "host": ["{{baseUrl}}"], "path": ["atividades", "{{atividadeId}}"] }
+          }
+        },
+        {
+          "name": "GET RACI por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('RACI retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('raciId'))); pm.expect(json.atividadeId).to.eql(Number(pm.environment.get('atividadeId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/raci/{{raciId}}", "host": ["{{baseUrl}}"], "path": ["raci", "{{raciId}}"] }
+          }
+        },
+        {
+          "name": "GET recurso por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Recurso retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('recursoId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/recursos/{{recursoId}}", "host": ["{{baseUrl}}"], "path": ["recursos", "{{recursoId}}"] }
+          }
+        },
+        {
+          "name": "GET custo por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Custo retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('custoId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/custos/{{custoId}}", "host": ["{{baseUrl}}"], "path": ["custos", "{{custoId}}"] }
+          }
+        },
+        {
+          "name": "GET risco por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Risco retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('riscoId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/riscos/{{riscoId}}", "host": ["{{baseUrl}}"], "path": ["riscos", "{{riscoId}}"] }
+          }
+        },
+        {
+          "name": "GET checklist por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Checklist retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('checklistId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/checklists-qualidade/{{checklistId}}", "host": ["{{baseUrl}}"], "path": ["checklists-qualidade", "{{checklistId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Limpeza DELETE",
+      "item": [
+        {
+          "name": "DELETE checklist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/checklists-qualidade/{{checklistId}}", "host": ["{{baseUrl}}"], "path": ["checklists-qualidade", "{{checklistId}}"] }
+          }
+        },
+        {
+          "name": "DELETE risco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/riscos/{{riscoId}}", "host": ["{{baseUrl}}"], "path": ["riscos", "{{riscoId}}"] }
+          }
+        },
+        {
+          "name": "DELETE custo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/custos/{{custoId}}", "host": ["{{baseUrl}}"], "path": ["custos", "{{custoId}}"] }
+          }
+        },
+        {
+          "name": "DELETE recurso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/recursos/{{recursoId}}", "host": ["{{baseUrl}}"], "path": ["recursos", "{{recursoId}}"] }
+          }
+        },
+        {
+          "name": "DELETE RACI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/raci/{{raciId}}", "host": ["{{baseUrl}}"], "path": ["raci", "{{raciId}}"] }
+          }
+        },
+        {
+          "name": "DELETE atividade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/atividades/{{atividadeId}}", "host": ["{{baseUrl}}"], "path": ["atividades", "{{atividadeId}}"] }
+          }
+        },
+        {
+          "name": "DELETE item EAP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/eap-itens/{{eapItemId}}", "host": ["{{baseUrl}}"], "path": ["eap-itens", "{{eapItemId}}"] }
+          }
+        },
+        {
+          "name": "DELETE participante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/participantes/{{participanteId}}", "host": ["{{baseUrl}}"], "path": ["participantes", "{{participanteId}}"] }
+          }
+        },
+        {
+          "name": "DELETE projeto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/projetos/{{projetoId}}", "host": ["{{baseUrl}}"], "path": ["projetos", "{{projetoId}}"] }
+          }
+        },
+        {
+          "name": "DELETE usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["usuarios", "{{usuarioId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Atualizacoes PUT",
+      "item": [
+        {
+          "name": "PUT usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Usuario atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('usuarioId'))); pm.expect(json.nome).to.eql('Usuario Postman Atualizado'); pm.expect(json.perfil).to.eql('ADMINISTRADOR'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Usuario Postman Atualizado\",\n  \"email\": \"usuario.atualizado.{{$timestamp}}@teste.com\",\n  \"senha\": \"senha1234\",\n  \"telefone\": \"11988887777\",\n  \"perfil\": \"ADMINISTRADOR\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["usuarios", "{{usuarioId}}"] }
+          }
+        },
+        {
+          "name": "PUT projeto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Projeto atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.status).to.eql('PAUSADO'); pm.expect(json.percentualConcluido).to.eql(25); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Projeto Postman Atualizado\",\n  \"descricao\": \"Projeto atualizado via PUT\",\n  \"objetivo\": \"Validar fluxo de edicao\",\n  \"status\": \"PAUSADO\",\n  \"prioridade\": \"CRITICA\",\n  \"dataInicio\": \"2026-03-25\",\n  \"dataFim\": \"2026-07-15\",\n  \"orcamentoPrevisto\": 18000.00,\n  \"percentualConcluido\": 25\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/projetos/{{projetoId}}", "host": ["{{baseUrl}}"], "path": ["projetos", "{{projetoId}}"] }
+          }
+        },
+        {
+          "name": "PUT participante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Participante atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('participanteId'))); pm.expect(json.funcaoNoProjeto).to.eql('Gerente tecnico'); pm.expect(json.papelAcesso).to.eql('ADMINISTRADOR_PROJETO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"projetoId\": {{projetoId}},\n  \"funcaoNoProjeto\": \"Gerente tecnico\",\n  \"papelAcesso\": \"ADMINISTRADOR_PROJETO\",\n  \"ativo\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/participantes/{{participanteId}}", "host": ["{{baseUrl}}"], "path": ["participantes", "{{participanteId}}"] }
+          }
+        },
+        {
+          "name": "PUT item EAP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Item EAP atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('eapItemId'))); pm.expect(json.nome).to.eql('Modulo backend atualizado'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Modulo backend atualizado\",\n  \"descricao\": \"Entrega principal da API revisada\",\n  \"codigo\": \"1.1\",\n  \"nivel\": 2,\n  \"projetoId\": {{projetoId}},\n  \"itemPaiId\": null\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/eap-itens/{{eapItemId}}", "host": ["{{baseUrl}}"], "path": ["eap-itens", "{{eapItemId}}"] }
+          }
+        },
+        {
+          "name": "PUT atividade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Atividade atualizada', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('atividadeId'))); pm.expect(json.status).to.eql('CONCLUIDA'); pm.expect(json.percentualConclusao).to.eql(100); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Implementar controllers e services\",\n  \"descricao\": \"Atualizacao da atividade principal\",\n  \"status\": \"CONCLUIDA\",\n  \"prioridade\": \"CRITICA\",\n  \"dataInicio\": \"2026-03-25\",\n  \"prazo\": \"2026-04-05\",\n  \"dataConclusao\": \"2026-04-04\",\n  \"percentualConclusao\": 100,\n  \"projetoId\": {{projetoId}},\n  \"eapItemId\": {{eapItemId}},\n  \"responsavelId\": {{participanteId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/atividades/{{atividadeId}}", "host": ["{{baseUrl}}"], "path": ["atividades", "{{atividadeId}}"] }
+          }
+        },
+        {
+          "name": "PUT RACI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('RACI atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('raciId'))); pm.expect(json.papelRaci).to.eql('APROVADOR'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"atividadeId\": {{atividadeId}},\n  \"participanteId\": {{participanteId}},\n  \"papelRaci\": \"APROVADOR\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/raci/{{raciId}}", "host": ["{{baseUrl}}"], "path": ["raci", "{{raciId}}"] }
+          }
+        },
+        {
+          "name": "PUT recurso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Recurso atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('recursoId'))); pm.expect(json.quantidade).to.eql(2); pm.expect(json.tipo).to.eql('SERVICO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Servidor de homologacao gerenciado\",\n  \"tipo\": \"SERVICO\",\n  \"descricao\": \"Infraestrutura atualizada\",\n  \"quantidade\": 2,\n  \"custoUnitario\": 3200.00,\n  \"projetoId\": {{projetoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/recursos/{{recursoId}}", "host": ["{{baseUrl}}"], "path": ["recursos", "{{recursoId}}"] }
+          }
+        },
+        {
+          "name": "PUT custo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Custo atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('custoId'))); pm.expect(json.tipo).to.eql('PLANEJADO'); pm.expect(Number(json.valorReal)).to.eql(3500); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Custo de infraestrutura revisado\",\n  \"tipo\": \"PLANEJADO\",\n  \"valorPrevisto\": 3600.00,\n  \"valorReal\": 3500.00,\n  \"dataLancamento\": \"2026-03-28\",\n  \"projetoId\": {{projetoId}},\n  \"atividadeId\": {{atividadeId}},\n  \"recursoId\": {{recursoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/custos/{{custoId}}", "host": ["{{baseUrl}}"], "path": ["custos", "{{custoId}}"] }
+          }
+        },
+        {
+          "name": "PUT risco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Risco atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('riscoId'))); pm.expect(json.status).to.eql('MITIGADO'); pm.expect(json.criticidade).to.eql(8); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Atraso na integracao mitigado\",\n  \"descricao\": \"Risco reduzido apos antecipacao dos testes\",\n  \"categoria\": \"PRAZO\",\n  \"probabilidade\": 2,\n  \"impacto\": 4,\n  \"criticidade\": 8,\n  \"status\": \"MITIGADO\",\n  \"estrategiaResposta\": \"Mitigar\",\n  \"planoMitigacao\": \"Checkpoints adicionados e dependencias reduzidas\",\n  \"projetoId\": {{projetoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/riscos/{{riscoId}}", "host": ["{{baseUrl}}"], "path": ["riscos", "{{riscoId}}"] }
+          }
+        },
+        {
+          "name": "PUT checklist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Checklist atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('checklistId'))); pm.expect(json.status).to.eql('APROVADO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Validar endpoints principais e secundarios\",\n  \"criterio\": \"Todos os CRUDs devem responder corretamente\",\n  \"status\": \"APROVADO\",\n  \"dataVerificacao\": \"2026-03-29\",\n  \"observacoes\": \"Checklist aprovado apos execucao completa\",\n  \"projetoId\": {{projetoId}},\n  \"atividadeId\": {{atividadeId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/checklists-qualidade/{{checklistId}}", "host": ["{{baseUrl}}"], "path": ["checklists-qualidade", "{{checklistId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Atualizacoes PATCH",
+      "item": [
+        {
+          "name": "PATCH usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Usuario parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('usuarioId'))); pm.expect(json.telefone).to.eql('11977776666'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"telefone\": \"11977776666\"\n}" },
+            "url": { "raw": "{{baseUrl}}/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["usuarios", "{{usuarioId}}"] }
+          }
+        },
+        {
+          "name": "PATCH projeto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Projeto parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.status).to.eql('EM_ANDAMENTO'); pm.expect(json.percentualConcluido).to.eql(55); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"EM_ANDAMENTO\",\n  \"percentualConcluido\": 55\n}" },
+            "url": { "raw": "{{baseUrl}}/projetos/{{projetoId}}", "host": ["{{baseUrl}}"], "path": ["projetos", "{{projetoId}}"] }
+          }
+        },
+        {
+          "name": "PATCH participante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Participante parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('participanteId'))); pm.expect(json.ativo).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ativo\": false\n}" },
+            "url": { "raw": "{{baseUrl}}/participantes/{{participanteId}}", "host": ["{{baseUrl}}"], "path": ["participantes", "{{participanteId}}"] }
+          }
+        },
+        {
+          "name": "PATCH item EAP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Item EAP parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('eapItemId'))); pm.expect(json.descricao).to.eql('Descricao atualizada por PATCH'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"descricao\": \"Descricao atualizada por PATCH\"\n}" },
+            "url": { "raw": "{{baseUrl}}/eap-itens/{{eapItemId}}", "host": ["{{baseUrl}}"], "path": ["eap-itens", "{{eapItemId}}"] }
+          }
+        },
+        {
+          "name": "PATCH atividade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Atividade parcialmente atualizada', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('atividadeId'))); pm.expect(json.status).to.eql('BLOQUEADA'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"BLOQUEADA\",\n  \"percentualConclusao\": 80\n}" },
+            "url": { "raw": "{{baseUrl}}/atividades/{{atividadeId}}", "host": ["{{baseUrl}}"], "path": ["atividades", "{{atividadeId}}"] }
+          }
+        },
+        {
+          "name": "PATCH RACI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('RACI parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('raciId'))); pm.expect(json.papelRaci).to.eql('CONSULTADO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"papelRaci\": \"CONSULTADO\"\n}" },
+            "url": { "raw": "{{baseUrl}}/raci/{{raciId}}", "host": ["{{baseUrl}}"], "path": ["raci", "{{raciId}}"] }
+          }
+        },
+        {
+          "name": "PATCH recurso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Recurso parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('recursoId'))); pm.expect(json.quantidade).to.eql(3); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"quantidade\": 3\n}" },
+            "url": { "raw": "{{baseUrl}}/recursos/{{recursoId}}", "host": ["{{baseUrl}}"], "path": ["recursos", "{{recursoId}}"] }
+          }
+        },
+        {
+          "name": "PATCH custo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Custo parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('custoId'))); pm.expect(Number(json.valorReal)).to.eql(3700); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"valorReal\": 3700.00\n}" },
+            "url": { "raw": "{{baseUrl}}/custos/{{custoId}}", "host": ["{{baseUrl}}"], "path": ["custos", "{{custoId}}"] }
+          }
+        },
+        {
+          "name": "PATCH risco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Risco parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('riscoId'))); pm.expect(json.status).to.eql('ENCERRADO'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"ENCERRADO\"\n}" },
+            "url": { "raw": "{{baseUrl}}/riscos/{{riscoId}}", "host": ["{{baseUrl}}"], "path": ["riscos", "{{riscoId}}"] }
+          }
+        },
+        {
+          "name": "PATCH checklist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Checklist parcialmente atualizado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('checklistId'))); pm.expect(json.observacoes).to.eql('Observacao atualizada por PATCH'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"observacoes\": \"Observacao atualizada por PATCH\"\n}" },
+            "url": { "raw": "{{baseUrl}}/checklists-qualidade/{{checklistId}}", "host": ["{{baseUrl}}"], "path": ["checklists-qualidade", "{{checklistId}}"] }
+          }
+        }
+      ]
     }
   ]
 }

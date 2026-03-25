@@ -43,6 +43,18 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(
+                ApiErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .message(ex.getMessage())
+                        .details(List.of())
+                        .build());
+    }
+
     private String formatFieldError(FieldError error) {
         return error.getField() + ": " + error.getDefaultMessage();
     }
