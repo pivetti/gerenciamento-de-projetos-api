@@ -1,0 +1,350 @@
+{
+  "info": {
+    "_postman_id": "f9e56a2a-9550-43fd-9e7e-9f7dd0e3d2a7",
+    "name": "Demo API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colecao para testar o fluxo principal da API de gestao de projetos."
+  },
+  "item": [
+    {
+      "name": "01 - Fluxo Feliz",
+      "item": [
+        {
+          "name": "Criar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Usuario criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.email).to.include('@'); });",
+                  "pm.environment.set('usuarioId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Usuario Postman\",\n  \"email\": \"usuario.{{$timestamp}}@teste.com\",\n  \"senha\": \"senha123\",\n  \"telefone\": \"11999999999\",\n  \"perfil\": \"GERENTE_PROJETO\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/usuarios", "host": ["{{baseUrl}}"], "path": ["usuarios"] }
+          }
+        },
+        {
+          "name": "Criar projeto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Projeto criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.status).to.eql('EM_ANDAMENTO'); });",
+                  "pm.environment.set('projetoId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Projeto Postman {{$timestamp}}\",\n  \"descricao\": \"Projeto criado para validar a API\",\n  \"objetivo\": \"Exercitar o fluxo completo de cadastro\",\n  \"status\": \"EM_ANDAMENTO\",\n  \"prioridade\": \"ALTA\",\n  \"dataInicio\": \"2026-03-25\",\n  \"dataFim\": \"2026-06-30\",\n  \"orcamentoPrevisto\": 15000.00,\n  \"percentualConcluido\": 10\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/projetos", "host": ["{{baseUrl}}"], "path": ["projetos"] }
+          }
+        },
+        {
+          "name": "Criar participante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Participante vinculado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.usuarioId).to.eql(Number(pm.environment.get('usuarioId'))); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });",
+                  "pm.environment.set('participanteId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"projetoId\": {{projetoId}},\n  \"funcaoNoProjeto\": \"Lider tecnico\",\n  \"papelAcesso\": \"COORDENADOR\",\n  \"ativo\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/participantes", "host": ["{{baseUrl}}"], "path": ["participantes"] }
+          }
+        },
+        {
+          "name": "Criar item EAP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Item EAP criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });",
+                  "pm.environment.set('eapItemId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Modulo backend\",\n  \"descricao\": \"Entrega da camada principal da API\",\n  \"codigo\": \"1.1\",\n  \"nivel\": 2,\n  \"projetoId\": {{projetoId}},\n  \"itemPaiId\": null\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/eap-itens", "host": ["{{baseUrl}}"], "path": ["eap-itens"] }
+          }
+        },
+        {
+          "name": "Criar atividade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Atividade criada', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.responsavelId).to.eql(Number(pm.environment.get('participanteId'))); });",
+                  "pm.environment.set('atividadeId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Implementar controllers\",\n  \"descricao\": \"Criacao dos endpoints REST\",\n  \"status\": \"EM_ANDAMENTO\",\n  \"prioridade\": \"ALTA\",\n  \"dataInicio\": \"2026-03-25\",\n  \"prazo\": \"2026-04-05\",\n  \"dataConclusao\": null,\n  \"percentualConclusao\": 35,\n  \"projetoId\": {{projetoId}},\n  \"eapItemId\": {{eapItemId}},\n  \"responsavelId\": {{participanteId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/atividades", "host": ["{{baseUrl}}"], "path": ["atividades"] }
+          }
+        },
+        {
+          "name": "Criar atribuicao RACI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('RACI criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.atividadeId).to.eql(Number(pm.environment.get('atividadeId'))); pm.expect(json.participanteId).to.eql(Number(pm.environment.get('participanteId'))); });",
+                  "pm.environment.set('raciId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"atividadeId\": {{atividadeId}},\n  \"participanteId\": {{participanteId}},\n  \"papelRaci\": \"RESPONSAVEL\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/raci", "host": ["{{baseUrl}}"], "path": ["raci"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01B - Fluxo Feliz Complementar",
+      "item": [
+        {
+          "name": "Criar recurso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Recurso criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); });",
+                  "pm.environment.set('recursoId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Servidor de homologacao\",\n  \"tipo\": \"TECNOLOGICO\",\n  \"descricao\": \"Infraestrutura de apoio para o projeto\",\n  \"quantidade\": 1,\n  \"custoUnitario\": 2500.00,\n  \"projetoId\": {{projetoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/recursos", "host": ["{{baseUrl}}"], "path": ["recursos"] }
+          }
+        },
+        {
+          "name": "Criar custo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Custo criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.atividadeId).to.eql(Number(pm.environment.get('atividadeId'))); pm.expect(json.recursoId).to.eql(Number(pm.environment.get('recursoId'))); });",
+                  "pm.environment.set('custoId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Custo de infraestrutura inicial\",\n  \"tipo\": \"OPERACIONAL\",\n  \"valorPrevisto\": 3000.00,\n  \"valorReal\": 2800.00,\n  \"dataLancamento\": \"2026-03-25\",\n  \"projetoId\": {{projetoId}},\n  \"atividadeId\": {{atividadeId}},\n  \"recursoId\": {{recursoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/custos", "host": ["{{baseUrl}}"], "path": ["custos"] }
+          }
+        },
+        {
+          "name": "Criar risco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Risco criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.criticidade).to.eql(12); });",
+                  "pm.environment.set('riscoId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Atraso na integracao\",\n  \"descricao\": \"Dependencias externas podem atrasar a entrega\",\n  \"categoria\": \"PRAZO\",\n  \"probabilidade\": 3,\n  \"impacto\": 4,\n  \"criticidade\": 12,\n  \"status\": \"EM_ANALISE\",\n  \"estrategiaResposta\": \"Mitigar\",\n  \"planoMitigacao\": \"Antecipar validacoes e checkpoints\",\n  \"projetoId\": {{projetoId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/riscos", "host": ["{{baseUrl}}"], "path": ["riscos"] }
+          }
+        },
+        {
+          "name": "Criar checklist de qualidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Checklist criado', function () { pm.expect(json.id).to.be.a('number'); pm.expect(json.projetoId).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.atividadeId).to.eql(Number(pm.environment.get('atividadeId'))); });",
+                  "pm.environment.set('checklistId', json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Validar endpoints principais\",\n  \"criterio\": \"Todos os endpoints CRUD devem responder com sucesso\",\n  \"status\": \"PENDENTE\",\n  \"dataVerificacao\": \"2026-03-26\",\n  \"observacoes\": \"Checklist criado via Postman\",\n  \"projetoId\": {{projetoId}},\n  \"atividadeId\": {{atividadeId}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/checklists-qualidade", "host": ["{{baseUrl}}"], "path": ["checklists-qualidade"] }
+          }
+        },
+        {
+          "name": "Buscar projeto por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Projeto retornado', function () { pm.expect(json.id).to.eql(Number(pm.environment.get('projetoId'))); pm.expect(json.nome).to.be.a('string'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/projetos/{{projetoId}}", "host": ["{{baseUrl}}"], "path": ["projetos", "{{projetoId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Validacoes",
+      "item": [
+        {
+          "name": "Validacao 400 - usuario invalido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Erro de validacao', function () { pm.expect(json.message).to.eql('Dados de entrada invalidos'); pm.expect(json.details).to.be.an('array').that.is.not.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"email\": \"email-invalido\",\n  \"senha\": \"123\",\n  \"telefone\": \"123\",\n  \"perfil\": null\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/usuarios", "host": ["{{baseUrl}}"], "path": ["usuarios"] }
+          }
+        },
+        {
+          "name": "Validacao 404 - projeto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Erro 404 padronizado', function () { pm.expect(json.message).to.include('Projeto nao encontrado'); pm.expect(json.status).to.eql(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/projetos/999999999", "host": ["{{baseUrl}}"], "path": ["projetos", "999999999"] }
+          }
+        }
+      ]
+    }
+  ]
+}
