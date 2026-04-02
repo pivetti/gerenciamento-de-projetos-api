@@ -3,27 +3,32 @@ package com.example.demo.service;
 import com.example.demo.dto.participante.ParticipanteRequestDto;
 import com.example.demo.dto.participante.ParticipanteResponseDto;
 import com.example.demo.entity.Participante;
-import com.example.demo.enums.PapelAcesso;
+import com.example.demo.entity.Projeto;
+import com.example.demo.entity.Usuario;
 import com.example.demo.repository.ParticipanteRepository;
+import com.example.demo.repository.ProjetoRepository;
+import com.example.demo.repository.UsuarioRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class ParticipanteService {
 
     private final ParticipanteRepository participanteRepository;
-    private final EntityLookupService lookupService;
-    private final PatchFieldService patchFieldService;
+    private final UsuarioRepository usuarioRepository;
+    private final ProjetoRepository projetoRepository;
 
     public List<ParticipanteResponseDto> listarTodos() {
         return participanteRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public ParticipanteResponseDto buscarPorId(Long id) {
-        return toResponse(lookupService.getParticipante(id));
+        return toResponse(buscarParticipante(id));
     }
 
     public ParticipanteResponseDto criar(ParticipanteRequestDto request) {
@@ -33,45 +38,36 @@ public class ParticipanteService {
     }
 
     public ParticipanteResponseDto atualizar(Long id, ParticipanteRequestDto request) {
-        Participante participante = lookupService.getParticipante(id);
+        Participante participante = buscarParticipante(id);
         preencherCampos(participante, request);
         return toResponse(participanteRepository.save(participante));
     }
 
-    public ParticipanteResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
-        Participante participante = lookupService.getParticipante(id);
-        aplicarPatch(participante, updates);
-        return toResponse(participanteRepository.save(participante));
-    }
-
     public void deletar(Long id) {
-        participanteRepository.delete(lookupService.getParticipante(id));
+        participanteRepository.delete(buscarParticipante(id));
     }
 
     private void preencherCampos(Participante participante, ParticipanteRequestDto request) {
-        participante.setUsuario(lookupService.getUsuario(request.getUsuarioId()));
-        participante.setProjeto(lookupService.getProjeto(request.getProjetoId()));
+        participante.setUsuario(buscarUsuario(request.getUsuarioId()));
+        participante.setProjeto(buscarProjeto(request.getProjetoId()));
         participante.setFuncaoNoProjeto(request.getFuncaoNoProjeto());
         participante.setPapelAcesso(request.getPapelAcesso());
         participante.setAtivo(request.getAtivo());
     }
 
-    private void aplicarPatch(Participante participante, Map<String, Object> updates) {
-        if (updates.containsKey("usuarioId")) {
-            participante.setUsuario(lookupService.getUsuario(patchFieldService.getLong(updates, "usuarioId")));
-        }
-        if (updates.containsKey("projetoId")) {
-            participante.setProjeto(lookupService.getProjeto(patchFieldService.getLong(updates, "projetoId")));
-        }
-        if (updates.containsKey("funcaoNoProjeto")) {
-            participante.setFuncaoNoProjeto(patchFieldService.getString(updates, "funcaoNoProjeto"));
-        }
-        if (updates.containsKey("papelAcesso")) {
-            participante.setPapelAcesso(patchFieldService.getEnum(updates, "papelAcesso", PapelAcesso.class));
-        }
-        if (updates.containsKey("ativo")) {
-            participante.setAtivo(patchFieldService.getBoolean(updates, "ativo"));
-        }
+    private Participante buscarParticipante(Long id) {
+        return participanteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Participante nao encontrado com id " + id));
+    }
+
+    private Usuario buscarUsuario(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Usuario nao encontrado com id " + id));
+    }
+
+    private Projeto buscarProjeto(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projeto nao encontrado com id " + id));
     }
 
     private ParticipanteResponseDto toResponse(Participante participante) {

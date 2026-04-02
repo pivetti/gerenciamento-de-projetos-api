@@ -46,7 +46,5 @@ public class AtividadeRequestDto {
     @NotNull
     private Long projetoId;
 
-    private Long eapItemId;
-
     private Long responsavelId;
 }

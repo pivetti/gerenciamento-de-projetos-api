@@ -6,12 +6,10 @@ import com.example.demo.service.CustoService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,12 +43,6 @@ public class CustoController {
     @PutMapping("/{id}")
     public ResponseEntity<CustoResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody CustoRequestDto request) {
         return ResponseEntity.ok(custoService.atualizar(id, request));
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<CustoResponseDto> atualizarParcialmente(@PathVariable Long id,
-            @RequestBody Map<String, Object> updates) {
-        return ResponseEntity.ok(custoService.atualizarParcialmente(id, updates));
     }
 
     @DeleteMapping("/{id}")

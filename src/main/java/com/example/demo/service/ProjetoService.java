@@ -3,28 +3,26 @@ package com.example.demo.service;
 import com.example.demo.dto.projeto.ProjetoRequestDto;
 import com.example.demo.dto.projeto.ProjetoResponseDto;
 import com.example.demo.entity.Projeto;
-import com.example.demo.enums.Prioridade;
-import com.example.demo.enums.StatusProjeto;
 import com.example.demo.repository.ProjetoRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
-    private final EntityLookupService lookupService;
-    private final PatchFieldService patchFieldService;
 
     public List<ProjetoResponseDto> listarTodos() {
         return projetoRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public ProjetoResponseDto buscarPorId(Long id) {
-        return toResponse(lookupService.getProjeto(id));
+        return toResponse(buscarProjeto(id));
     }
 
     public ProjetoResponseDto criar(ProjetoRequestDto request) {
@@ -34,19 +32,13 @@ public class ProjetoService {
     }
 
     public ProjetoResponseDto atualizar(Long id, ProjetoRequestDto request) {
-        Projeto projeto = lookupService.getProjeto(id);
+        Projeto projeto = buscarProjeto(id);
         preencherCampos(projeto, request);
         return toResponse(projetoRepository.save(projeto));
     }
 
-    public ProjetoResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
-        Projeto projeto = lookupService.getProjeto(id);
-        aplicarPatch(projeto, updates);
-        return toResponse(projetoRepository.save(projeto));
-    }
-
     public void deletar(Long id) {
-        projetoRepository.delete(lookupService.getProjeto(id));
+        projetoRepository.delete(buscarProjeto(id));
     }
 
     private void preencherCampos(Projeto projeto, ProjetoRequestDto request) {
@@ -61,34 +53,9 @@ public class ProjetoService {
         projeto.setPercentualConcluido(request.getPercentualConcluido());
     }
 
-    private void aplicarPatch(Projeto projeto, Map<String, Object> updates) {
-        if (updates.containsKey("nome")) {
-            projeto.setNome(patchFieldService.getString(updates, "nome"));
-        }
-        if (updates.containsKey("descricao")) {
-            projeto.setDescricao(patchFieldService.getString(updates, "descricao"));
-        }
-        if (updates.containsKey("objetivo")) {
-            projeto.setObjetivo(patchFieldService.getString(updates, "objetivo"));
-        }
-        if (updates.containsKey("status")) {
-            projeto.setStatus(patchFieldService.getEnum(updates, "status", StatusProjeto.class));
-        }
-        if (updates.containsKey("prioridade")) {
-            projeto.setPrioridade(patchFieldService.getEnum(updates, "prioridade", Prioridade.class));
-        }
-        if (updates.containsKey("dataInicio")) {
-            projeto.setDataInicio(patchFieldService.getLocalDate(updates, "dataInicio"));
-        }
-        if (updates.containsKey("dataFim")) {
-            projeto.setDataFim(patchFieldService.getLocalDate(updates, "dataFim"));
-        }
-        if (updates.containsKey("orcamentoPrevisto")) {
-            projeto.setOrcamentoPrevisto(patchFieldService.getBigDecimal(updates, "orcamentoPrevisto"));
-        }
-        if (updates.containsKey("percentualConcluido")) {
-            projeto.setPercentualConcluido(patchFieldService.getInteger(updates, "percentualConcluido"));
-        }
+    private Projeto buscarProjeto(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projeto nao encontrado com id " + id));
     }
 
     private ProjetoResponseDto toResponse(Projeto projeto) {

@@ -59,10 +59,6 @@ public class Projeto {
 
     @OneToMany(mappedBy = "projeto")
     @Builder.Default
-    private List<EapItem> eapItens = new ArrayList<>();
-
-    @OneToMany(mappedBy = "projeto")
-    @Builder.Default
     private List<Atividade> atividades = new ArrayList<>();
 
     @OneToMany(mappedBy = "projeto")
@@ -76,8 +72,4 @@ public class Projeto {
     @OneToMany(mappedBy = "projeto")
     @Builder.Default
     private List<Custo> custos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "projeto")
-    @Builder.Default
-    private List<ChecklistQualidade> checklistsQualidade = new ArrayList<>();
 }

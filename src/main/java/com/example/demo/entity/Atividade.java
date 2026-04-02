@@ -57,22 +57,10 @@ public class Atividade {
     private Projeto projeto;
 
     @ManyToOne
-    @JoinColumn(name = "eap_item_id")
-    private EapItem eapItem;
-
-    @ManyToOne
     @JoinColumn(name = "responsavel_id")
     private Participante responsavel;
 
     @OneToMany(mappedBy = "atividade")
     @Builder.Default
-    private List<RaciAssignacao> atribuicoesRaci = new ArrayList<>();
-
-    @OneToMany(mappedBy = "atividade")
-    @Builder.Default
     private List<Custo> custos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "atividade")
-    @Builder.Default
-    private List<ChecklistQualidade> checklistsQualidade = new ArrayList<>();
 }

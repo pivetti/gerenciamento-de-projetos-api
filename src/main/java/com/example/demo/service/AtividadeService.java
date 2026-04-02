@@ -3,28 +3,32 @@ package com.example.demo.service;
 import com.example.demo.dto.atividade.AtividadeRequestDto;
 import com.example.demo.dto.atividade.AtividadeResponseDto;
 import com.example.demo.entity.Atividade;
-import com.example.demo.enums.Prioridade;
-import com.example.demo.enums.StatusAtividade;
+import com.example.demo.entity.Participante;
+import com.example.demo.entity.Projeto;
 import com.example.demo.repository.AtividadeRepository;
+import com.example.demo.repository.ParticipanteRepository;
+import com.example.demo.repository.ProjetoRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class AtividadeService {
 
     private final AtividadeRepository atividadeRepository;
-    private final EntityLookupService lookupService;
-    private final PatchFieldService patchFieldService;
+    private final ProjetoRepository projetoRepository;
+    private final ParticipanteRepository participanteRepository;
 
     public List<AtividadeResponseDto> listarTodos() {
         return atividadeRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public AtividadeResponseDto buscarPorId(Long id) {
-        return toResponse(lookupService.getAtividade(id));
+        return toResponse(buscarAtividade(id));
     }
 
     public AtividadeResponseDto criar(AtividadeRequestDto request) {
@@ -34,19 +38,13 @@ public class AtividadeService {
     }
 
     public AtividadeResponseDto atualizar(Long id, AtividadeRequestDto request) {
-        Atividade atividade = lookupService.getAtividade(id);
+        Atividade atividade = buscarAtividade(id);
         preencherCampos(atividade, request);
         return toResponse(atividadeRepository.save(atividade));
     }
 
-    public AtividadeResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
-        Atividade atividade = lookupService.getAtividade(id);
-        aplicarPatch(atividade, updates);
-        return toResponse(atividadeRepository.save(atividade));
-    }
-
     public void deletar(Long id) {
-        atividadeRepository.delete(lookupService.getAtividade(id));
+        atividadeRepository.delete(buscarAtividade(id));
     }
 
     private void preencherCampos(Atividade atividade, AtividadeRequestDto request) {
@@ -58,48 +56,24 @@ public class AtividadeService {
         atividade.setPrazo(request.getPrazo());
         atividade.setDataConclusao(request.getDataConclusao());
         atividade.setPercentualConclusao(request.getPercentualConclusao());
-        atividade.setProjeto(lookupService.getProjeto(request.getProjetoId()));
-        atividade.setEapItem(request.getEapItemId() != null ? lookupService.getEapItem(request.getEapItemId()) : null);
+        atividade.setProjeto(buscarProjeto(request.getProjetoId()));
         atividade.setResponsavel(
-                request.getResponsavelId() != null ? lookupService.getParticipante(request.getResponsavelId()) : null);
+                request.getResponsavelId() != null ? buscarParticipante(request.getResponsavelId()) : null);
     }
 
-    private void aplicarPatch(Atividade atividade, Map<String, Object> updates) {
-        if (updates.containsKey("titulo")) {
-            atividade.setTitulo(patchFieldService.getString(updates, "titulo"));
-        }
-        if (updates.containsKey("descricao")) {
-            atividade.setDescricao(patchFieldService.getString(updates, "descricao"));
-        }
-        if (updates.containsKey("status")) {
-            atividade.setStatus(patchFieldService.getEnum(updates, "status", StatusAtividade.class));
-        }
-        if (updates.containsKey("prioridade")) {
-            atividade.setPrioridade(patchFieldService.getEnum(updates, "prioridade", Prioridade.class));
-        }
-        if (updates.containsKey("dataInicio")) {
-            atividade.setDataInicio(patchFieldService.getLocalDate(updates, "dataInicio"));
-        }
-        if (updates.containsKey("prazo")) {
-            atividade.setPrazo(patchFieldService.getLocalDate(updates, "prazo"));
-        }
-        if (updates.containsKey("dataConclusao")) {
-            atividade.setDataConclusao(patchFieldService.getLocalDate(updates, "dataConclusao"));
-        }
-        if (updates.containsKey("percentualConclusao")) {
-            atividade.setPercentualConclusao(patchFieldService.getInteger(updates, "percentualConclusao"));
-        }
-        if (updates.containsKey("projetoId")) {
-            atividade.setProjeto(lookupService.getProjeto(patchFieldService.getLong(updates, "projetoId")));
-        }
-        if (updates.containsKey("eapItemId")) {
-            Long eapItemId = patchFieldService.getLong(updates, "eapItemId");
-            atividade.setEapItem(eapItemId != null ? lookupService.getEapItem(eapItemId) : null);
-        }
-        if (updates.containsKey("responsavelId")) {
-            Long responsavelId = patchFieldService.getLong(updates, "responsavelId");
-            atividade.setResponsavel(responsavelId != null ? lookupService.getParticipante(responsavelId) : null);
-        }
+    private Atividade buscarAtividade(Long id) {
+        return atividadeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Atividade nao encontrada com id " + id));
+    }
+
+    private Projeto buscarProjeto(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projeto nao encontrado com id " + id));
+    }
+
+    private Participante buscarParticipante(Long id) {
+        return participanteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Participante nao encontrado com id " + id));
     }
 
     private AtividadeResponseDto toResponse(Atividade atividade) {
@@ -115,8 +89,6 @@ public class AtividadeService {
                 .percentualConclusao(atividade.getPercentualConclusao())
                 .projetoId(atividade.getProjeto().getId())
                 .projetoNome(atividade.getProjeto().getNome())
-                .eapItemId(atividade.getEapItem() != null ? atividade.getEapItem().getId() : null)
-                .eapItemNome(atividade.getEapItem() != null ? atividade.getEapItem().getNome() : null)
                 .responsavelId(atividade.getResponsavel() != null ? atividade.getResponsavel().getId() : null)
                 .responsavelNome(atividade.getResponsavel() != null ? atividade.getResponsavel().getUsuario().getNome() : null)
                 .build();

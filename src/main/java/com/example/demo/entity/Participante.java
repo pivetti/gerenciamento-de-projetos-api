@@ -50,8 +50,4 @@ public class Participante {
     @OneToMany(mappedBy = "responsavel")
     @Builder.Default
     private List<Atividade> atividadesResponsaveis = new ArrayList<>();
-
-    @OneToMany(mappedBy = "participante")
-    @Builder.Default
-    private List<RaciAssignacao> atribuicoesRaci = new ArrayList<>();
 }

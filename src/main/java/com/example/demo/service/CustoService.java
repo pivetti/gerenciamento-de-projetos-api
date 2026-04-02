@@ -2,28 +2,36 @@ package com.example.demo.service;
 
 import com.example.demo.dto.custo.CustoRequestDto;
 import com.example.demo.dto.custo.CustoResponseDto;
+import com.example.demo.entity.Atividade;
 import com.example.demo.entity.Custo;
-import com.example.demo.enums.TipoCusto;
+import com.example.demo.entity.Projeto;
+import com.example.demo.entity.Recurso;
+import com.example.demo.repository.AtividadeRepository;
 import com.example.demo.repository.CustoRepository;
+import com.example.demo.repository.ProjetoRepository;
+import com.example.demo.repository.RecursoRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class CustoService {
 
     private final CustoRepository custoRepository;
-    private final EntityLookupService lookupService;
-    private final PatchFieldService patchFieldService;
+    private final ProjetoRepository projetoRepository;
+    private final AtividadeRepository atividadeRepository;
+    private final RecursoRepository recursoRepository;
 
     public List<CustoResponseDto> listarTodos() {
         return custoRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public CustoResponseDto buscarPorId(Long id) {
-        return toResponse(lookupService.getCusto(id));
+        return toResponse(buscarCusto(id));
     }
 
     public CustoResponseDto criar(CustoRequestDto request) {
@@ -33,19 +41,13 @@ public class CustoService {
     }
 
     public CustoResponseDto atualizar(Long id, CustoRequestDto request) {
-        Custo custo = lookupService.getCusto(id);
+        Custo custo = buscarCusto(id);
         preencherCampos(custo, request);
         return toResponse(custoRepository.save(custo));
     }
 
-    public CustoResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
-        Custo custo = lookupService.getCusto(id);
-        aplicarPatch(custo, updates);
-        return toResponse(custoRepository.save(custo));
-    }
-
     public void deletar(Long id) {
-        custoRepository.delete(lookupService.getCusto(id));
+        custoRepository.delete(buscarCusto(id));
     }
 
     private void preencherCampos(Custo custo, CustoRequestDto request) {
@@ -54,38 +56,29 @@ public class CustoService {
         custo.setValorPrevisto(request.getValorPrevisto());
         custo.setValorReal(request.getValorReal());
         custo.setDataLancamento(request.getDataLancamento());
-        custo.setProjeto(lookupService.getProjeto(request.getProjetoId()));
-        custo.setAtividade(request.getAtividadeId() != null ? lookupService.getAtividade(request.getAtividadeId()) : null);
-        custo.setRecurso(request.getRecursoId() != null ? lookupService.getRecurso(request.getRecursoId()) : null);
+        custo.setProjeto(buscarProjeto(request.getProjetoId()));
+        custo.setAtividade(request.getAtividadeId() != null ? buscarAtividade(request.getAtividadeId()) : null);
+        custo.setRecurso(request.getRecursoId() != null ? buscarRecurso(request.getRecursoId()) : null);
     }
 
-    private void aplicarPatch(Custo custo, Map<String, Object> updates) {
-        if (updates.containsKey("descricao")) {
-            custo.setDescricao(patchFieldService.getString(updates, "descricao"));
-        }
-        if (updates.containsKey("tipo")) {
-            custo.setTipo(patchFieldService.getEnum(updates, "tipo", TipoCusto.class));
-        }
-        if (updates.containsKey("valorPrevisto")) {
-            custo.setValorPrevisto(patchFieldService.getBigDecimal(updates, "valorPrevisto"));
-        }
-        if (updates.containsKey("valorReal")) {
-            custo.setValorReal(patchFieldService.getBigDecimal(updates, "valorReal"));
-        }
-        if (updates.containsKey("dataLancamento")) {
-            custo.setDataLancamento(patchFieldService.getLocalDate(updates, "dataLancamento"));
-        }
-        if (updates.containsKey("projetoId")) {
-            custo.setProjeto(lookupService.getProjeto(patchFieldService.getLong(updates, "projetoId")));
-        }
-        if (updates.containsKey("atividadeId")) {
-            Long atividadeId = patchFieldService.getLong(updates, "atividadeId");
-            custo.setAtividade(atividadeId != null ? lookupService.getAtividade(atividadeId) : null);
-        }
-        if (updates.containsKey("recursoId")) {
-            Long recursoId = patchFieldService.getLong(updates, "recursoId");
-            custo.setRecurso(recursoId != null ? lookupService.getRecurso(recursoId) : null);
-        }
+    private Custo buscarCusto(Long id) {
+        return custoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Custo nao encontrado com id " + id));
+    }
+
+    private Projeto buscarProjeto(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projeto nao encontrado com id " + id));
+    }
+
+    private Atividade buscarAtividade(Long id) {
+        return atividadeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Atividade nao encontrada com id " + id));
+    }
+
+    private Recurso buscarRecurso(Long id) {
+        return recursoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Recurso nao encontrado com id " + id));
     }
 
     private CustoResponseDto toResponse(Custo custo) {

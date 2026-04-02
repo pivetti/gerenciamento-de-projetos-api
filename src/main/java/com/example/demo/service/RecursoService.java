@@ -2,28 +2,30 @@ package com.example.demo.service;
 
 import com.example.demo.dto.recurso.RecursoRequestDto;
 import com.example.demo.dto.recurso.RecursoResponseDto;
+import com.example.demo.entity.Projeto;
 import com.example.demo.entity.Recurso;
-import com.example.demo.enums.TipoRecurso;
+import com.example.demo.repository.ProjetoRepository;
 import com.example.demo.repository.RecursoRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class RecursoService {
 
     private final RecursoRepository recursoRepository;
-    private final EntityLookupService lookupService;
-    private final PatchFieldService patchFieldService;
+    private final ProjetoRepository projetoRepository;
 
     public List<RecursoResponseDto> listarTodos() {
         return recursoRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public RecursoResponseDto buscarPorId(Long id) {
-        return toResponse(lookupService.getRecurso(id));
+        return toResponse(buscarRecurso(id));
     }
 
     public RecursoResponseDto criar(RecursoRequestDto request) {
@@ -33,19 +35,13 @@ public class RecursoService {
     }
 
     public RecursoResponseDto atualizar(Long id, RecursoRequestDto request) {
-        Recurso recurso = lookupService.getRecurso(id);
+        Recurso recurso = buscarRecurso(id);
         preencherCampos(recurso, request);
         return toResponse(recursoRepository.save(recurso));
     }
 
-    public RecursoResponseDto atualizarParcialmente(Long id, Map<String, Object> updates) {
-        Recurso recurso = lookupService.getRecurso(id);
-        aplicarPatch(recurso, updates);
-        return toResponse(recursoRepository.save(recurso));
-    }
-
     public void deletar(Long id) {
-        recursoRepository.delete(lookupService.getRecurso(id));
+        recursoRepository.delete(buscarRecurso(id));
     }
 
     private void preencherCampos(Recurso recurso, RecursoRequestDto request) {
@@ -54,28 +50,17 @@ public class RecursoService {
         recurso.setDescricao(request.getDescricao());
         recurso.setQuantidade(request.getQuantidade());
         recurso.setCustoUnitario(request.getCustoUnitario());
-        recurso.setProjeto(lookupService.getProjeto(request.getProjetoId()));
+        recurso.setProjeto(buscarProjeto(request.getProjetoId()));
     }
 
-    private void aplicarPatch(Recurso recurso, Map<String, Object> updates) {
-        if (updates.containsKey("nome")) {
-            recurso.setNome(patchFieldService.getString(updates, "nome"));
-        }
-        if (updates.containsKey("tipo")) {
-            recurso.setTipo(patchFieldService.getEnum(updates, "tipo", TipoRecurso.class));
-        }
-        if (updates.containsKey("descricao")) {
-            recurso.setDescricao(patchFieldService.getString(updates, "descricao"));
-        }
-        if (updates.containsKey("quantidade")) {
-            recurso.setQuantidade(patchFieldService.getInteger(updates, "quantidade"));
-        }
-        if (updates.containsKey("custoUnitario")) {
-            recurso.setCustoUnitario(patchFieldService.getBigDecimal(updates, "custoUnitario"));
-        }
-        if (updates.containsKey("projetoId")) {
-            recurso.setProjeto(lookupService.getProjeto(patchFieldService.getLong(updates, "projetoId")));
-        }
+    private Recurso buscarRecurso(Long id) {
+        return recursoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Recurso nao encontrado com id " + id));
+    }
+
+    private Projeto buscarProjeto(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projeto nao encontrado com id " + id));
     }
 
     private RecursoResponseDto toResponse(Recurso recurso) {

@@ -22,8 +22,6 @@ public class AtividadeResponseDto {
     private Integer percentualConclusao;
     private Long projetoId;
     private String projetoNome;
-    private Long eapItemId;
-    private String eapItemNome;
     private Long responsavelId;
     private String responsavelNome;
 }
